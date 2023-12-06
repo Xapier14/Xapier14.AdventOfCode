@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Xapier14.AdventOfCode</Title>
+    <Authors>Xapier14</Authors>
+    <Company>Xapier14</Company>
+    <Description>An Advent of Code API for .NET.</Description>
+    <Copyright>Copyright 2023 - Xapier14</Copyright>
+    <PackageProjectUrl>https://github.com/Xapier14/Xapier14.AdventOfCode</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Xapier14/Xapier14.AdventOfCode.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver" Version="4.15.0" />
+    <PackageReference Include="WebDriverManager" Version="2.17.1" />
+  </ItemGroup>
+
+</Project>
