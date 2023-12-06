@@ -69,6 +69,6 @@ namespace Xapier14.AdventOfCode
         }
 
         public static string[] GetInputAsLines(bool force = false)
-            => GetInput(force).Split('\n');
+            => GetInput(force).Split('\n').SkipLast(1).ToArray();
     }
 }
