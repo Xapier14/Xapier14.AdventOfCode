@@ -37,7 +37,7 @@ namespace Xapier14.AdventOfCode
             var chromeDriverInfo = new FileInfo(manager.SetUpDriver(driverConfig));
             var service = ChromeDriverService.CreateDefaultService(chromeDriverInfo.DirectoryName, chromeDriverInfo.Name);
             var chrome = new ChromeDriver(service);
-            chrome.Navigate().GoToUrl("https://adventofcode.com/2023/auth/login");
+            chrome.Navigate().GoToUrl($"https://adventofcode.com/{DateTime.Now.Year}/auth/login");
             Cookie? session = null;
             while (session == null)
             {
