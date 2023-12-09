@@ -70,5 +70,29 @@ namespace Xapier14.AdventOfCode
 
         public static string[] GetInputAsLines(bool force = false)
             => GetInput(force).Split('\n').SkipLast(1).ToArray();
+        
+        public static void Assert<T1, T2>(Func<T1[], T2> func, T1[] input, T2 control)
+        {
+            var sample = func(input);
+            if (!EqualityComparer<T2>.Default.Equals(sample, control))
+            {
+                Console.WriteLine("[{0}] Test failed: {1} actual, {2} expected.", func.Method.Name, sample, control);
+                Environment.Exit(-1);
+            }
+
+            Console.WriteLine("[{0}] Test passed.", func.Method.Name);
+        }
+        
+        public static void Assert<T1, T2>(Func<T1, T2> func, T1 input, T2 control)
+        {
+            var sample = func(input);
+            if (!EqualityComparer<T2>.Default.Equals(sample, control))
+            {
+                Console.WriteLine("[{0}] Test failed: {1} actual, {2} expected.", func.Method.Name, sample, control);
+                Environment.Exit(-1);
+            }
+
+            Console.WriteLine("[{0}] Test passed.", func.Method.Name);
+        }
     }
 }
