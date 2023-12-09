@@ -1,6 +1,6 @@
 # Xapier14.AdventOfCode
 A simple Advent of Code API for .NET.
-Provides authentication, input retrieval, and assertion.
+Provides authentication, input retrieval, answer submission and assertion.
 
 ## Installation
 1. Add the package to your project.
@@ -33,8 +33,14 @@ var control2 = 2;
 AdventOfCode.Assert(Part2, input2, control2);
 
 // Solve
+var part1 = Part1(lines);
 Console.WriteLine("Part 1: {0}", Part1(lines));
+var part2 = Part2(text);
 Console.WriteLine("Part 2: {0}", Part2(text));
+
+// Submit
+AdventOfCode.SubmitPart1(part1);
+AdventOfCode.SubmitPart2(part2);
 return;
 
 int Part1(string[] lines)
