@@ -1,10 +1,15 @@
 ﻿using System.Net;
+using System.Web;
+using HtmlAgilityPack;
 
 namespace Xapier14.AdventOfCode
 {
     public static class AdventOfCode
     {
-        private static readonly HttpClient _http = new();
+        private static readonly HttpClient _http = new(new HttpClientHandler
+        {
+            AllowAutoRedirect = false
+        });
         private static string _workDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Xapier14.AdventOfCode");
         private static string _cacheDir = Path.Join(_workDir, "cache");
 
@@ -94,5 +99,70 @@ namespace Xapier14.AdventOfCode
 
             Console.WriteLine("[{0}] Test passed.", func.Method.Name);
         }
+
+        public static void Submit<T>(byte level, T value)
+        {
+            var content = new Dictionary<string, string>()
+            {
+                { "level", $"{level}" },
+                { "answer", $"{value}" }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"https://adventofcode.com/{Year}/day/{Day}/answer"),
+                Content = new FormUrlEncodedContent(content)
+            };
+            request.Headers.Add("Origin", "https://adventofcode.com");
+            request.Headers.Add("Referrer", $"https://adventofcode.com/{Year}/day/{Day}");
+
+            HttpResponseMessage response;
+            do
+            {
+                char key;
+                do
+                {
+                    Console.WriteLine("You are submitting \"{0}\" as your answer for Part {1} of Day {2}, Year {3}.",
+                        value,
+                        level,
+                        Day,
+                        Year);
+                    Console.Write("Do you want to continue? (y/n): "); 
+                    key = Console.ReadKey().KeyChar;
+                    Console.WriteLine();
+                    if (key != 'n')
+                        continue;
+                    Console.WriteLine("Cancelled submission.");
+                    return;
+                } while (key != 'y');
+                
+                Console.WriteLine("Sending answer...");
+                response = _http.Send(request);
+                if (response.IsSuccessStatusCode)
+                    continue;
+                Console.WriteLine("Error submitting answer.");
+                Console.WriteLine("Please login again.");
+                var session = Auth.InitiateAuth();
+                _http.DefaultRequestHeaders.Clear();
+                _http.DefaultRequestHeaders.Add("Cookie", $"session={session}");
+            } while (!response.IsSuccessStatusCode);
+
+            var task = response.Content.ReadAsStringAsync();
+            task.Wait();
+
+            var html = new HtmlDocument();
+            html.LoadHtml(task.Result);
+            var message = html.DocumentNode.SelectSingleNode("//article/p").InnerText;
+
+            Console.WriteLine("Result for Part {0} submission:", level);
+            Console.WriteLine(message);
+        }
+
+        public static void SubmitPart1<T>(T value)
+            => Submit(1, value);
+
+        public static void SubmitPart2<T>(T value)
+            => Submit(2, value);
     }
 }
