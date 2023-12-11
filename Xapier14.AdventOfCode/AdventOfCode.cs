@@ -4,6 +4,9 @@ using HtmlAgilityPack;
 
 namespace Xapier14.AdventOfCode
 {
+    /// <summary>
+    /// A set of methods for interacting with Advent of Code.
+    /// </summary>
     public static class AdventOfCode
     {
         private static readonly HttpClient _http = new(new HttpClientHandler
@@ -30,6 +33,11 @@ namespace Xapier14.AdventOfCode
             Day = Math.Clamp(Day, 1, 25);
         }
 
+        /// <summary>
+        /// Sets the year and day to interface with Advent of Code.
+        /// </summary>
+        /// <param name="year">The year to use. (Must be greater than or equal 2015)</param>
+        /// <param name="day">The day to use. (Must be in the range of 1-25)</param>
         public static void SetYearAndDay(int year, int day)
         {
             Year = year;
@@ -37,12 +45,18 @@ namespace Xapier14.AdventOfCode
             ValidateYearAndDay();
         }
 
-        public static string GetInput(bool force = false)
+        /// <summary>
+        /// <para>Retrieves the input from Advent of Code using the session provided and caches it.</para>
+        /// <para>Returns the cached version of the input as text unless <paramref name="invalidateCache"/> is <c>true</c>.</para>
+        /// </summary>
+        /// <param name="invalidateCache">Forces a download of the input from Advent of Code.</param>
+        /// <returns>The input as text.</returns>
+        public static string GetInputText(bool invalidateCache = false)
         {
             var cachePath = Path.Combine(_cacheDir, $"{Year}/{Day}");
             Directory.CreateDirectory(cachePath);
             var inputFilePath = Path.Combine(cachePath, "input.txt");
-            if (!force && File.Exists(inputFilePath))
+            if (!invalidateCache && File.Exists(inputFilePath))
                 return File.ReadAllText(inputFilePath);
 
             var request = new HttpRequestMessage
@@ -72,40 +86,33 @@ namespace Xapier14.AdventOfCode
 
             return result;
         }
-
-        public static string[] GetInputAsLines(bool force = false)
-            => GetInput(force).Split('\n').SkipLast(1).ToArray();
         
-        public static void Assert<T1, T2>(Func<T1[], T2> func, T1[] input, T2 control)
-        {
-            var sample = func(input);
-            if (!EqualityComparer<T2>.Default.Equals(sample, control))
-            {
-                Console.WriteLine("[{0}] Test failed: {1} actual, {2} expected.", func.Method.Name, sample, control);
-                Environment.Exit(-1);
-            }
+        /// <summary>
+        /// <para>Retrieves the input from Advent of Code using the session provided and caches it.</para>
+        /// <para>Returns the cached version of the input as lines unless <paramref name="invalidateCache"/> is <c>true</c>.</para>
+        /// </summary>
+        /// <param name="invalidateCache">Forces a download of the input from Advent of Code.</param>
+        /// <returns>The input as lines of text.</returns>
+        public static string[] GetInputLines(bool invalidateCache = false)
+            => GetInputText(invalidateCache).Split('\n').SkipLast(1).ToArray();
 
-            Console.WriteLine("[{0}] Test passed.", func.Method.Name);
-        }
-        
-        public static void Assert<T1, T2>(Func<T1, T2> func, T1 input, T2 control)
-        {
-            var sample = func(input);
-            if (!EqualityComparer<T2>.Default.Equals(sample, control))
-            {
-                Console.WriteLine("[{0}] Test failed: {1} actual, {2} expected.", func.Method.Name, sample, control);
-                Environment.Exit(-1);
-            }
-
-            Console.WriteLine("[{0}] Test passed.", func.Method.Name);
-        }
-
-        public static void Submit<T>(byte level, T value)
+        /// <summary>
+        /// <para>Submits an answer to Advent of Code.</para>
+        /// <remarks>
+        /// Warning, this method does not implement a wait timer for rate limiting.
+        /// Improper use of this method may be considered abusive.
+        /// Please use it responsibly.
+        /// </remarks>
+        /// </summary>
+        /// <typeparam name="T">The data type of the answer.</typeparam>
+        /// <param name="level">The 'level' corresponding to what part of the day it is. (Part 1 or Part 2)</param>
+        /// <param name="answer">The answer to be submitted.</param>
+        public static void Submit<T>(byte level, T answer)
         {
             var content = new Dictionary<string, string>()
             {
                 { "level", $"{level}" },
-                { "answer", $"{value}" }
+                { "answer", $"{answer}" }
             };
 
             var request = new HttpRequestMessage
@@ -124,7 +131,7 @@ namespace Xapier14.AdventOfCode
                 do
                 {
                     Console.WriteLine("You are submitting \"{0}\" as your answer for Part {1} of Day {2}, Year {3}.",
-                        value,
+                        answer,
                         level,
                         Day,
                         Year);
@@ -159,10 +166,30 @@ namespace Xapier14.AdventOfCode
             Console.WriteLine(message);
         }
 
-        public static void SubmitPart1<T>(T value)
-            => Submit(1, value);
-
-        public static void SubmitPart2<T>(T value)
-            => Submit(2, value);
+        /// <summary>
+        /// <para>Submits an answer to Advent of Code as Part 1.</para>
+        /// <remarks>
+        /// Warning, this method does not implement a wait timer for rate limiting.
+        /// Improper use of this method may be considered abusive.
+        /// Please use it responsibly.
+        /// </remarks>
+        /// </summary>
+        /// <typeparam name="T">The data type of the answer.</typeparam>
+        /// <param name="answer">The answer to be submitted.</param>
+        public static void SubmitPart1<T>(T answer)
+            => Submit(1, answer);
+        
+        /// <summary>
+        /// <para>Submits an answer to Advent of Code as Part 2.</para>
+        /// <remarks>
+        /// Warning, this method does not implement a wait timer for rate limiting.
+        /// Improper use of this method may be considered abusive.
+        /// Please use it responsibly.
+        /// </remarks>
+        /// </summary>
+        /// <typeparam name="T">The data type of the answer.</typeparam>
+        /// <param name="answer">The answer to be submitted.</param>
+        public static void SubmitPart2<T>(T answer)
+            => Submit(2, answer);
     }
 }
