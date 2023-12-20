@@ -1,10 +1,53 @@
-﻿namespace Xapier14.AdventOfCode
+﻿using System.Text;
+
+namespace Xapier14.AdventOfCode
 {
     /// <summary>
     /// A set of utility methods.
     /// </summary>
-    public class Utility
+    public static class Utility
     {
+        private static long GcfTwo(long a, long b)
+        {
+            while (b != 0)
+            {
+                long temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+        
+        /// <summary>
+        /// Calculates the GCF of an array of long integers.
+        /// </summary>
+        /// <param name="values">The array of long integers.</param>
+        /// <returns>The GCF result. Returns 0 if the array is empty.</returns>
+        public static long Gcf(params long[] values)
+        {
+            if (values.Length <= 0)
+                return 0;
+            var gcf = values[0];
+            for (var i = 1; i < values.Length; i++)
+                gcf = GcfTwo(gcf, values[i]);
+            return gcf;
+        }
+
+        /// <summary>
+        /// Calculates the LCM of an array of long integers.
+        /// </summary>
+        /// <param name="values">The array of long integers.</param>
+        /// <returns>The LCM result. Returns 0 if the array is empty.</returns>
+        public static long Lcm(params long[] values)
+        {
+            if (values.Length <= 0)
+                return 0;
+            var lcm = values[0];
+            for (var i = 1; i < values.Length; i++)
+                lcm = lcm / GcfTwo(lcm, values[i]) * values[i];
+            return lcm;
+        }
+
         /// <summary>
         /// Hashes a pair of values.
         /// </summary>
@@ -21,6 +64,88 @@
         /// <returns>The hash of the pair of values.</returns>
         public static long Hash((long X, long Y) pair)
             => Hash(pair.X, pair.Y);
+
+        /// <summary>
+        /// Hashes a char array.
+        /// </summary>
+        /// <param name="array">The array to hash.</param>
+        /// <returns>The hash of the char array.</returns>
+        public static long Hash(char[] array)
+            => new string(array).GetHashCode();
+
+        /// <summary>
+        /// Hashes a jagged char array.
+        /// </summary>
+        /// <param name="array">The jagged array to hash.</param>
+        /// <returns>The hash of the jagged char array.</returns>
+        public static long Hash(char[][] array)
+        {
+            // good enough i guess
+            var sb = new StringBuilder();
+            foreach (var t in array)
+                sb.Append(t);
+            return sb.ToString().GetHashCode();
+        }
+
+        /// <summary>
+        /// Hashes a string.
+        /// </summary>
+        /// <param name="str">The string to hash.</param>
+        /// <returns>The hash of the string.</returns>
+        public static long Hash(string str)
+            => str.GetHashCode();
+
+        /// <summary>
+        /// Hashes a string array.
+        /// </summary>
+        /// <param name="array">The string array to hash.</param>
+        /// <returns>The hash of the string array.</returns>
+        public static long Hash(string[] array)
+        {
+            // good enough i guess
+            var sb = new StringBuilder();
+            foreach (var t in array)
+                sb.Append(t);
+            return sb.ToString().GetHashCode();
+        }
+
+        /// <summary>
+        /// Hashes an object.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to hash.</typeparam>
+        /// <param name="obj">The object to hash.</param>
+        /// <returns>The hash of the object.</returns>
+        public static long Hash<T>(T obj)
+        {
+            if (typeof(T) == typeof(string))
+                return Hash((string)Convert.ChangeType(obj, typeof(string))!);
+            if (typeof(T) == typeof(string[]))
+                return Hash((string[])Convert.ChangeType(obj, typeof(string[]))!);
+            if (typeof(T) == typeof(char[]))
+                return Hash((char[])Convert.ChangeType(obj, typeof(char[]))!);
+            if (typeof(T) == typeof(char[][]))
+                return Hash((char[][])Convert.ChangeType(obj, typeof(char[][]))!);
+            if (typeof(T) == typeof((long, long)))
+                return Hash(((long, long))Convert.ChangeType(obj, typeof((long, long)))!);
+            if (typeof(T) == typeof(T[]))
+                return Hash((T[])Convert.ChangeType(obj, typeof(T[]))!);
+            return obj!.GetHashCode();
+        }
+
+        /// <summary>
+        /// Hashes an object array.
+        /// </summary>
+        /// <typeparam name="T">The type of the object(s) to hash.</typeparam>
+        /// <param name="array">The object array to hash.</param>
+        /// <returns>The hash of the object array.</returns>
+        public static long Hash<T>(T[] array)
+        {
+            // good enough i guess
+            var sb = new StringBuilder();
+            foreach (var t in array)
+                sb.Append($"{Hash(t)}");
+            return sb.ToString().GetHashCode();
+        }
 
         /// <summary>
         /// Commutatively hashes a pair of values.
