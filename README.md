@@ -18,8 +18,8 @@ using Xapier14.AdventOfCode;
 AdventOfCode.SetYearAndDay(2023, 1);
 
 // Input Retrieval
-var text = AdventOfCode.GetInput();
-var lines = AdventOfCode.GetInputAsLines();
+var text = AdventOfCode.GetInputText();
+var lines = AdventOfCode.GetInputLines();
 
 // Testing
 var input1 =
@@ -27,10 +27,10 @@ var input1 =
     Some sample input.
     """.Split(Environment.NewLine);
 var control1 = 1;
-AdventOfCode.Assert(Part1, input1, control1);
+Utility.Assert(Part1, input1, control1);
 var input2 = "Another test";
 var control2 = 2;
-AdventOfCode.Assert(Part2, input2, control2);
+Utility.Assert(Part2, input2, control2);
 
 // Solve
 var part1 = Part1(lines);
